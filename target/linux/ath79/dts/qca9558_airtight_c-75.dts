@@ -20,7 +20,7 @@
 	chosen {
 		bootargs = "console=ttyS0,115200";
 	};
-	
+
 &pcie0 {
 	status = "okay";
 };
