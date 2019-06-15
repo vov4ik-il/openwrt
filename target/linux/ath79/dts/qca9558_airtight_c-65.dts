@@ -32,7 +32,7 @@
 		power_amber: power_amber {
 			label = "c-65:amber:power";
 			gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
-			default-state = "on";
+			default-state = "off";
 		};
 
 		lan {
@@ -120,7 +120,7 @@
 	};
 };
 
- &eth0 {
+&eth0 {
 	status = "okay";
 
 	mtd-mac-address = <&art 0x00>;
