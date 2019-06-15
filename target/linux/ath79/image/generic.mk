@@ -75,6 +75,16 @@ define Device/seama
   SEAMA_SIGNATURE :=
 endef
 
+define Device/airtight_c-75
+  ATH_SOC := qca9558
+  DEVICE_TITLE := Airtight C-75
+  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x
+  IMAGE/default := append-kernel | pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+  IMAGE_SIZE := 15936k
+  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += airtight_c-75
+
 define Device/8dev_carambola2
   ATH_SOC := ar9331
   DEVICE_TITLE := 8devices Carambola2

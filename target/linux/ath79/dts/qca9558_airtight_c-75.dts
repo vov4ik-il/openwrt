@@ -1,0 +1,111 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/*
+ * This board has two identical flash ICs but only one is defined in this file.
+ * This board has one more LED for 5Ghz WiFi but it is onboard with QCA9882 (ath10k) and not defined in this file.
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "qca9557.dtsi"
+
+/ {
+	model = "AirTight C-75";
+	compatible = "airtight,c-75", "qca,qca9558";
+
+	chosen {
+		bootargs = "console=ttyS0,115200";
+	};
+
+&pcie0 {
+	status = "okay";
+};
+
+&pcie1 {
+	status = "okay";
+};
+
+&uart {
+	status = "okay";
+};
+
+&spi {
+	status = "okay";
+	num-cs = <1>;
+
+	flash@0 {
+		compatible = "macronix, mx25l12805d", "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <25000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			uboot: partition@0 {
+				label = "u-boot";
+				reg = <0x000000 0x040000>;
+				read-only;
+			};
+
+			partition@40000 {
+				label = "uboot-env";
+				reg = <0x040000 0x020000>;
+			};
+
+			partition@60000  {
+				label = "firmware";
+				reg = <0x060000 0xf90000>;
+				compatible = "denx,uimage";
+			};
+
+			art: partition@ff0000 {
+				label = "art";
+				reg = <0xff0000 0x010000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&mdio0 {
+	status = "okay";
+
+	phy5: ethernet-phy@5 {
+		reg = <5>;
+		at803x-disable-smarteee;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	mtd-mac-address = <&art 0x00>;
+	pll-data = <0x82000101 0x80000101 0x80001313>;
+	phy-handle = <&phy5>;
+	phy-mode = "rgmii-id";
+
+	gmac-config {
+		device = <&gmac>;
+
+		rxdv-delay = <3>;
+		rxd-delay = <3>;
+		txen-delay = <0>;
+		txd-delay = <0>;
+		rgmii-enabled = <1>;
+	};
+};
+
+&uart {
+	status = "okay";
+};
+
+&wmac {
+	status = "okay";
+	mtd-cal-data = <&art 0x1000>;
+	mtd-mac-address = <&art 0x0>;
+};
