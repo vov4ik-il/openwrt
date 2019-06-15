@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
 /*
- * This board has two identical flash ICs but only one is defined in this file.
+ * This board has QCA9550-AT4A CPU but the layout is identical to the one for QC9558.
+ * This board has two MX25L12835FMI-10G ICs but only one is described in this device tree file.
  * This board has one more LED for 5Ghz WiFi but it is onboard with QCA9882 (ath10k) and not defined in this file.
  */
 
@@ -100,6 +101,29 @@
 	};
 };
 
+&mdio1 {
+	phy1: ethernet-phy@1 {
+		reg = <1>;
+	};
+};
+
+&eth1 {
+	status = "okay";
+
+	mtd-mac-address = <&art 0x0>;
+	mtd-mac-address-increment = <1>;
+	phy-handle = <&phy1>;
+	pll-data = <0x03000101 0x00000101 0x00001313>;
+};
+
+&usb_phy0 {
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+};
+
 &uart {
 	status = "okay";
 };
@@ -107,5 +131,6 @@
 &wmac {
 	status = "okay";
 	mtd-cal-data = <&art 0x1000>;
+	mtd-mac-address-increment = <2>;
 	mtd-mac-address = <&art 0x0>;
 };

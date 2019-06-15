@@ -11,6 +11,7 @@ ath79_setup_interfaces()
 	case "$board" in
 	airtight,c-75)
 		ucidef_set_interface_lan "eth0"
+		ucidef_set_interface_wan "eth1"
 		;;
 	aruba,ap-105|\
 	avm,fritz300e|\
