@@ -21,14 +21,6 @@
 		bootargs = "console=ttyS0,115200";
 	};
 
-&pcie0 {
-	status = "okay";
-};
-
-&pcie1 {
-	status = "okay";
-};
-
 &uart {
 	status = "okay";
 };
@@ -133,4 +125,11 @@
 	mtd-cal-data = <&art 0x1000>;
 	mtd-mac-address-increment = <2>;
 	mtd-mac-address = <&art 0x0>;
+};
+&pcie0 {
+	status = "okay";
+};
+
+&pcie1 {
+	status = "okay";
 };
