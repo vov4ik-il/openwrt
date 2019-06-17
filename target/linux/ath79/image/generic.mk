@@ -78,7 +78,8 @@ endef
 define Device/airtight_c-75
   ATH_SOC := qca9558
   DEVICE_TITLE := Airtight C-75
-  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x
+  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca988x-ct-htt kmod-usb-core kmod-usb-ohci kmod-usb-uhci\
+	kmod-usb2 kmod-usb-ledtrig-usbport kmod-owl-loader kmod-leds-reset
   IMAGE/default := append-kernel | pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
   IMAGE_SIZE := 15936k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
