@@ -2,8 +2,8 @@
 
 /*
  * This board has QCA9550-AT4A CPU which is generic to Scorpion line, since QCA9550 is not defined in ath79 I just set it to be QCA9558.
- * This LEDs "2.4Ghz WiFi" and "Power Green" seem to be connected to AR8334 and I did not find a way to export them.
- * This board has Reset Button but wiring is not know and is not defined in this file.
+ * LEDs "2.4Ghz WiFi" and "Power Green" seem to be connected to AR8334 and I did not find a way to export them.
+ * This board has Reset Button but wiring is not known and is not defined in this file.
  */
 
 /dts-v1/;
