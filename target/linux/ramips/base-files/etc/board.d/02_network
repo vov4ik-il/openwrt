@@ -87,7 +87,6 @@ ramips_setup_interfaces()
 	dir-300-b7|\
 	dir-320-b1|\
 	dir-610-a1|\
-	dir-615-h1|\
 	dir-810l|\
 	dlink,dwr-116-a1|\
 	dlink,dwr-921-c1|\
@@ -95,7 +94,6 @@ ramips_setup_interfaces()
 	ew1200|\
 	firewrt|\
 	hc5661a|\
-	hc5962|\
 	hlk-rm04|\
 	k2p|\
 	kn|\
@@ -114,8 +112,6 @@ ramips_setup_interfaces()
 	pbr-m1|\
 	psg1208|\
 	psg1218a|\
-	r6220|\
-	netgear,r6350|\
 	rt-n12p|\
 	sap-g3200u3|\
 	sk-wb8|\
@@ -130,7 +126,6 @@ ramips_setup_interfaces()
 	whr-g300n|\
 	mqmaker,witi-256m|\
 	mqmaker,witi-512m|\
-	wndr3700v5|\
 	youku-yk1|\
 	youku,yk-l2|\
 	zbt-ape522ii|\
@@ -175,6 +170,19 @@ ramips_setup_interfaces()
 	wrh-300cr)
 		ucidef_set_interface_lan "eth0"
 		;;
+	alfa-network,quad-e4g|\
+	netgear,r6120|\
+	r6220|\
+	netgear,r6350|\
+	wndr3700v5)
+		ucidef_add_switch "switch0" \
+			"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "4:wan" "6@eth0"
+		;;
+	alfa-network,r36m-e4g|\
+	wcr-1166ds)
+		ucidef_add_switch "switch0" \
+			"3:lan" "4:wan" "6@eth0"
+		;;
 	dlink,dwr-118-a1)
 		ucidef_add_switch "switch0" \
 			"1:lan:2" "2:lan:3" "3:lan:1" "4:lan:0" "5:wan" "6@eth0"
@@ -213,11 +221,11 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan" "2:lan" "3:lan" "4:lan" "6t@eth0"
 		;;
+	asus,rt-ac57u|\
 	atp-52b|\
 	awm002-evb-4M|\
 	awm002-evb-8M|\
 	bdcom,wap2100-sk|\
-	c20i|\
 	dir-645|\
 	gl-mt300a|\
 	gl-mt300n|\
@@ -228,7 +236,6 @@ ramips_setup_interfaces()
 	jhr-n825r|\
 	jhr-n926r|\
 	mikrotik,rb750gr3|\
-	mikrotik,rbm33g|\
 	mzk-wdpr|\
 	rt-n14u|\
 	skylab,skw92a|\
@@ -253,6 +260,11 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan" "2:lan" "3:lan" "4:lan" "0:wan" "6@eth0"
 		;;
+	mikrotik,rbm33g)
+		ucidef_add_switch "switch0" \
+			"1:lan" "2:lan" "0:wan" "6@eth0"
+		;;
+	c20i|\
 	c50|\
 	tplink,c20-v1)
 		ucidef_add_switch "switch0" \
@@ -331,6 +343,10 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "5:wan" "6@eth0"
 		;;
+	hc5962)
+		ucidef_add_switch "switch0" \
+			"1:lan" "2:lan" "3:lan" "4:wan" "6@eth0"
+		;;
 	iodata,wn-ac1167gr|\
 	iodata,wn-ac733gr3)
 		ucidef_add_switch "switch1" \
@@ -353,10 +369,6 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "6t@eth0"
 		ucidef_set_interface_wan "usb0"
-		;;
-	netgear,r6120)
-		ucidef_add_switch "switch0" \
-			"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "4:wan" "6@eth0"
 		;;
 	hc5761)
 		ucidef_add_switch "switch0" \
@@ -425,10 +437,6 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan" "2:lan" "3:lan" "4:lan" "0:wan" "5@eth0"
 		;;
-	wcr-1166ds)
-		ucidef_add_switch "switch0" \
-			"3:lan" "4:wan" "6@eth0"
-		;;
 	wcr-150gn|\
 	we1026-5g-16m)
 		ucidef_add_switch "switch0" \
@@ -495,6 +503,19 @@ ramips_setup_macs()
 	wmdr-143n)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		;;
+	asus,rt-ac57u|\
+	vr500)
+		lan_mac=$(mtd_get_mac_binary factory 57344)
+		wan_mac=$(mtd_get_mac_binary factory 57350)
+		;;
+	alfa-network,quad-e4g|\
+	elecom,wrc-1167ghbk2-s|\
+	elecom,wrc-2533gst|\
+	elecom,wrc-1900gst|\
+	sk-wb8)
+		wan_mac=$(mtd_get_mac_binary factory 57350)
+		;;
+	alfa-network,r36m-e4g|\
 	carambola|\
 	freestation5|\
 	w502u|\
@@ -508,7 +529,6 @@ ramips_setup_macs()
 	dir-320-b1|\
 	dir-620-a1|\
 	esr-9753|\
-	freestation5|\
 	hilink,hlk-7628n|\
 	hlk-rm04|\
 	mpr-a1|\
@@ -529,12 +549,12 @@ ramips_setup_macs()
 		wan_mac=$(mtd_get_mac_binary devdata 7)
 		;;
 	cy-swr1100|\
-	dch-m225)
-		lan_mac=$(mtd_get_mac_ascii factory lanmac)
-		;;
 	dir-645)
 		lan_mac=$(mtd_get_mac_ascii nvram lanmac)
 		wan_mac=$(mtd_get_mac_ascii nvram wanmac)
+		;;
+	dch-m225)
+		lan_mac=$(mtd_get_mac_ascii factory lanmac)
 		;;
 	dir-860l-b1)
 		lan_mac=$(mtd_get_mac_ascii factory lanmac)
@@ -553,15 +573,10 @@ ramips_setup_macs()
 	e1700)
 		wan_mac=$(mtd_get_mac_ascii config WAN_MAC_ADDR)
 		;;
-	edimax,br-6478ac-v2)
+	edimax,br-6478ac-v2|\
+	netgear,r6350)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		wan_mac=$(macaddr_add "$lan_mac" 2)
-		;;
-	elecom,wrc-1167ghbk2-s|\
-	elecom,wrc-2533gst|\
-	elecom,wrc-1900gst|\
-	sk-wb8)
-		wan_mac=$(mtd_get_mac_binary factory 57350)
 		;;
 	gl-mt300n-v2|\
 	whr-g300n)
@@ -622,12 +637,6 @@ ramips_setup_macs()
 		lan_mac=$(mtd_get_mac_binary factory 40)
 		wan_mac=$(mtd_get_mac_binary factory 46)
 		;;
-	r6220|\
-	netgear,r6350|\
-	wndr3700v5)
-		wan_mac=$(mtd_get_mac_binary factory 4)
-		lan_mac=$(macaddr_add "$wan_mac" 1)
-		;;
 	rt-n56u)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		lan_mac=$(macaddr_setbit_la "$lan_mac")
@@ -646,10 +655,6 @@ ramips_setup_macs()
 	tiny-ac)
 		lan_mac=$(mtd_get_mac_ascii u-boot-env LAN_MAC_ADDR)
 		wan_mac=$(mtd_get_mac_ascii u-boot-env WAN_MAC_ADDR)
-		;;
-	vr500)
-		lan_mac=$(mtd_get_mac_binary factory 57344)
-		wan_mac=$(mtd_get_mac_binary factory 57350)
 		;;
 	w306r-v20)
 		lan_mac=$(cat /sys/class/net/eth0/address)

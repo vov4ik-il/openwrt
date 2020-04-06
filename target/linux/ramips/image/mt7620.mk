@@ -51,6 +51,14 @@ define Device/alfa-network_ac1200rm
 endef
 TARGET_DEVICES += alfa-network_ac1200rm
 
+define Device/alfa-network_r36m-e4g
+  DTS := R36M-E4G
+  IMAGE_SIZE := 16064k
+  DEVICE_TITLE := ALFA Network R36M-E4G
+  DEVICE_PACKAGES := kmod-i2c-ralink kmod-usb2 kmod-usb-ohci uboot-envtools uqmi
+endef
+TARGET_DEVICES += alfa-network_r36m-e4g
+
 define Device/alfa-network_tube-e4g
   DTS := TUBE-E4G
   IMAGE_SIZE := 16064k
@@ -86,7 +94,6 @@ define Device/ArcherC20i
   TPLINK_HWID := 0xc2000001
   TPLINK_HWREV := 58
   IMAGES += factory.bin
-  DEVICE_PACKAGES := kmod-mt76x0e
   DEVICE_TITLE := TP-Link ArcherC20i
   DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-ohci
 endef
@@ -287,7 +294,7 @@ define Device/ex2700
 	netgear-dni
   DEVICE_TITLE := Netgear EX2700
 endef
-TARGET_DEVICES += ex2700
+#TARGET_DEVICES += ex2700
 
 define Device/ex3700-ex3800
   NETGEAR_BOARD_ID := U12H319T00_NETGEAR
@@ -730,7 +737,7 @@ define Device/wt3020-4M
 	poray-header -B WT3020 -F 4M
   DEVICE_TITLE := Nexx WT3020 (4MB)
 endef
-TARGET_DEVICES += wt3020-4M
+#TARGET_DEVICES += wt3020-4M
 
 define Device/wt3020-8M
   DTS := WT3020-8M
