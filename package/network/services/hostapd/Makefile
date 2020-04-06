@@ -7,22 +7,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hostapd
-PKG_RELEASE:=6
+PKG_RELEASE:=8
 
 PKG_SOURCE_URL:=http://w1.fi/hostap.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2018-12-02
-PKG_SOURCE_VERSION:=c2c6c01bb8b6fafc2074b46a53c4eab2c145ac6f
-PKG_MIRROR_HASH:=d381123fe42059b553d96122a03c35e7d1709153c3aaf10fa4e74fe59be243dd
+PKG_SOURCE_DATE:=2019-08-08
+PKG_SOURCE_VERSION:=ca8c2bd28ad53f431d6ee60ef754e98cfdb4c17b
+PKG_MIRROR_HASH:=9d9f1c60afa5324ee17219bd3ec61c1a6fa4043b4187da9bb44e59025d3ed31d
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=BSD-3-Clause
 PKG_CPE_ID:=cpe:/a:w1.fi:hostapd
 
 PKG_BUILD_PARALLEL:=1
+PKG_ASLR_PIE_REGULAR:=1
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_WPA_SUPPLICANT_NO_TIMESTAMP_CHECK \
 	CONFIG_PACKAGE_kmod-ath9k \
 	CONFIG_PACKAGE_kmod-cfg80211 \
 	CONFIG_PACKAGE_hostapd \
@@ -67,8 +67,6 @@ ifeq ($(LOCAL_VARIANT),mesh)
   CONFIG_VARIANT:=full
 endif
 
-PKG_BUILD_DIR=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
-
 include $(INCLUDE_DIR)/package.mk
 
 STAMP_CONFIGURED:=$(STAMP_CONFIGURED)_$(CONFIG_WPA_MSG_MIN_PRIORITY)
@@ -89,24 +87,17 @@ DRIVER_MAKEOPTS= \
 	CONFIG_IEEE80211AC=$(HOSTAPD_IEEE80211AC) \
 	CONFIG_DRIVER_WEXT=$(CONFIG_DRIVER_WEXT_SUPPORT) \
 
-space :=
-space +=
-
-ifeq ($(LOCAL_VARIANT),full)
-  DRIVER_MAKEOPTS += CONFIG_IEEE80211W=$(CONFIG_DRIVER_11W_SUPPORT)
-endif
-
-ifeq ($(LOCAL_VARIANT),basic)
+ifneq ($(LOCAL_VARIANT),mini)
   DRIVER_MAKEOPTS += CONFIG_IEEE80211W=$(CONFIG_DRIVER_11W_SUPPORT)
 endif
 
 ifeq ($(LOCAL_VARIANT),full)
   ifeq ($(SSL_VARIANT),openssl)
-    DRIVER_MAKEOPTS += CONFIG_TLS=openssl CONFIG_SAE=y CONFIG_OWE=y CONFIG_SUITEB192=y
+    DRIVER_MAKEOPTS += CONFIG_TLS=openssl CONFIG_SAE=y CONFIG_OWE=y CONFIG_SUITEB192=y CONFIG_AP=y CONFIG_MESH=y
     TARGET_LDFLAGS += -lcrypto -lssl
   endif
   ifeq ($(SSL_VARIANT),wolfssl)
-    DRIVER_MAKEOPTS += CONFIG_TLS=wolfssl CONFIG_WPS_NFC=1 CONFIG_SAE=y CONFIG_OWE=y CONFIG_SUITEB192=y
+    DRIVER_MAKEOPTS += CONFIG_TLS=wolfssl CONFIG_WPS_NFC=1 CONFIG_SAE=y CONFIG_OWE=y CONFIG_SUITEB192=y CONFIG_AP=y CONFIG_MESH=y
     TARGET_LDFLAGS += -lwolfssl
   endif
 endif
@@ -123,14 +114,9 @@ ifneq ($(LOCAL_TYPE),hostapd)
     endif
   endif
 
-  ifdef CONFIG_WPA_SUPPLICANT_NO_TIMESTAMP_CHECK
-    TARGET_CFLAGS += -DNO_TIMESTAMP_CHECK
-  endif
   ifdef CONFIG_WPA_RFKILL_SUPPORT
     DRIVER_MAKEOPTS += NEED_RFKILL=y
   endif
-  DRIVER_MAKEOPTS += \
-	CONFIG_DRIVER_ROBOSWITCH=$(CONFIG_PACKAGE_kmod-switch)
 endif
 
 ifdef CONFIG_USE_GLIBC
@@ -144,6 +130,7 @@ DRV_DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny
 define Package/hostapd/Default
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   TITLE:=IEEE 802.1x Authenticator
   URL:=http://hostap.epitest.fi/
   DEPENDS:=$(DRV_DEPENDS) +hostapd-common +libubus
@@ -205,6 +192,7 @@ endef
 define Package/wpad/Default
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   TITLE:=IEEE 802.1x Authenticator/Supplicant
   DEPENDS:=$(DRV_DEPENDS) +hostapd-common +libubus
   URL:=http://hostap.epitest.fi/
@@ -294,6 +282,7 @@ Package/wpad-mesh-wolfssl/description = $(Package/wpad-mesh/description)
 define Package/wpa-supplicant/Default
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   TITLE:=WPA Supplicant
   URL:=http://hostap.epitest.fi/wpa_supplicant/
   DEPENDS:=$(DRV_DEPENDS) +hostapd-common +libubus
@@ -366,11 +355,13 @@ define Package/hostapd-common
   TITLE:=hostapd/wpa_supplicant common support files
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
 endef
 
 define Package/hostapd-utils
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   TITLE:=IEEE 802.1x Authenticator (utils)
   URL:=http://hostap.epitest.fi/
   DEPENDS:=@$(subst $(space),||,$(foreach pkg,$(HOSTAPD_PROVIDERS),PACKAGE_$(pkg)))
@@ -384,6 +375,7 @@ endef
 define Package/wpa-cli
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   DEPENDS:=@$(subst $(space),||,$(foreach pkg,$(SUPPLICANT_PROVIDERS),PACKAGE_$(pkg)))
   TITLE:=WPA Supplicant command line control utility
 endef
@@ -391,6 +383,7 @@ endef
 define Package/eapol-test
   TITLE:=802.1x authentication test utility
   SECTION:=net
+  SUBMENU:=WirelessAPD
   CATEGORY:=Network
   VARIANT:=supplicant-full-internal
   DEPENDS:=$(DRV_DEPENDS) +libubus
@@ -400,6 +393,7 @@ define Package/eapol-test-openssl
   TITLE:=802.1x authentication test utility
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   VARIANT:=supplicant-full-openssl
   CONFLICTS:=$(filter-out eapol-test-openssl ,$(EAPOL_TEST_PROVIDERS))
   DEPENDS:=$(DRV_DEPENDS) +libubus +libopenssl
@@ -410,6 +404,7 @@ define Package/eapol-test-wolfssl
   TITLE:=802.1x authentication test utility
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=WirelessAPD
   VARIANT:=supplicant-full-wolfssl
   CONFLICTS:=$(filter-out eapol-test-openssl ,$(filter-out eapol-test-wolfssl ,$(EAPOL_TEST_PROVIDERS)))
   DEPENDS:=$(DRV_DEPENDS) +libubus +libwolfssl
@@ -531,8 +526,9 @@ define Install/supplicant
 endef
 
 define Package/hostapd-common/install
-	$(INSTALL_DIR) $(1)/lib/netifd $(1)/etc/rc.button
+	$(INSTALL_DIR) $(1)/lib/netifd $(1)/etc/rc.button $(1)/etc/hotplug.d/ieee80211
 	$(INSTALL_DATA) ./files/hostapd.sh $(1)/lib/netifd/hostapd.sh
+	$(INSTALL_BIN) ./files/hostapd.hotplug $(1)/etc/hotplug.d/ieee80211/20-hostapd
 	$(INSTALL_BIN) ./files/wps-hotplug.sh $(1)/etc/rc.button/wps
 endef
 

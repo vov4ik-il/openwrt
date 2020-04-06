@@ -76,6 +76,7 @@ ar71xx_setup_interfaces()
 	cf-e380ac-v2|\
 	cpe210-v2|\
 	cpe210-v3|\
+	cpe510-v2|\
 	dr342|\
 	eap120|\
 	eap300v2|\
@@ -239,6 +240,8 @@ ar71xx_setup_interfaces()
 			"0@eth1" "2:lan" "3:lan" "4:lan" "5:lan" "6@eth0" "1:wan"
 		;;
 	archer-c25-v1|\
+	archer-c60-v1|\
+	archer-c60-v2|\
 	rb-750-r2|\
 	rb-750p-pbr2|\
 	rb-750up-r2|\
@@ -256,12 +259,6 @@ ar71xx_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
 		ucidef_add_switch "switch0" \
 			"0@eth1" "1:lan:1" "2:lan:4" "3:lan:3" "4:lan:2"
-		;;
-	archer-c60-v1|\
-	archer-c60-v2)
-		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
-		ucidef_add_switch "switch0" \
-			"0@eth1" "1:lan:1" "2:lan:2" "3:lan:3" "4:lan:4"
 		;;
 	arduino-yun|\
 	dir-505-a1|\
@@ -604,11 +601,11 @@ ar71xx_setup_macs()
 
 	case $board in
 	archer-c7-v4)
-		base_mac=$(mtd_get_mac_binary config 8)
+		base_mac=$(mtd_get_mac_binary config 0x8)
 		wan_mac=$(macaddr_add "$base_mac" 1)
 		;;
 	archer-c7-v5)
-		base_mac=$(mtd_get_mac_binary info 8)
+		base_mac=$(mtd_get_mac_binary info 0x8)
 		wan_mac=$(macaddr_add "$base_mac" 1)
 		;;
 	dgl-5500-a1|\
@@ -619,8 +616,8 @@ ar71xx_setup_macs()
 	dir-835-a1|\
 	wndr3700v4|\
 	wndr4300)
-		lan_mac=$(mtd_get_mac_binary caldata 0)
-		wan_mac=$(mtd_get_mac_binary caldata 6)
+		lan_mac=$(mtd_get_mac_binary caldata 0x0)
+		wan_mac=$(mtd_get_mac_binary caldata 0x6)
 		;;
 	dir-869-a1|\
 	mynet-n750)
@@ -632,9 +629,13 @@ ar71xx_setup_macs()
 	fritz300e)
 		lan_mac=$(fritz_tffs -n maca -i $(find_mtd_part "tffs (1)"))
 		;;
+	tl-wdr4300)
+		base_mac=$(mtd_get_mac_binary u-boot 0x1fc00)
+		wan_mac=$(macaddr_add "$base_mac" 1)
+		;;
 	tl-wr1043n-v5|\
 	tl-wr1043nd-v4)
-		lan_mac=$(mtd_get_mac_binary product-info 8)
+		lan_mac=$(mtd_get_mac_binary product-info 0x8)
 		wan_mac=$(macaddr_add "$lan_mac" 1)
 		;;
 	wlr8100)

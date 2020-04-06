@@ -124,6 +124,8 @@ ifeq ($(DUMP),)
       endif
       $(PKG_INSTALL_STAMP).$(1): prepare-package-install
 		echo "$(1)" >> $(PKG_INSTALL_STAMP)
+    else
+      $(if $(CONFIG_PACKAGE_$(1)),$$(warning WARNING: skipping $(1) -- package has no install section))
     endif
     endif
 
@@ -205,7 +207,7 @@ $(_endef)
 	(cd $$(IDIR_$(1)); \
 		( \
 			find . -type f \! -path ./CONTROL/\* -exec sha256sum \{\} \; 2> /dev/null | \
-			sed 's|\([[:blank:]]\)\./|\1/|' > $$(IDIR_$(1))/CONTROL/files-sha256 \
+			sed 's|\([[:blank:]]\)\./|\1/|' > $$(IDIR_$(1))/CONTROL/files-sha256sum \
 		) || true \
 	)
     endif
