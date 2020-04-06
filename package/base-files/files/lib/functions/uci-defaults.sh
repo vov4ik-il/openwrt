@@ -307,6 +307,14 @@ ucidef_set_interface_macaddr() {
 	ucidef_set_interface "$network" macaddr "$macaddr"
 }
 
+ucidef_set_label_macaddr() {
+	local macaddr="$1"
+
+	json_select_object system
+		json_add_string label_macaddr "$macaddr"
+	json_select ..
+}
+
 ucidef_add_atm_bridge() {
 	local vpi="$1"
 	local vci="$2"
@@ -476,6 +484,7 @@ _ucidef_set_led_timer() {
 
 	_ucidef_set_led_common "$1" "$2" "$3"
 
+	json_add_string type "$trigger_name"
 	json_add_string trigger "$trigger_name"
 	json_add_int delayon "$delayon"
 	json_add_int delayoff "$delayoff"
@@ -606,6 +615,5 @@ board_config_update() {
 }
 
 board_config_flush() {
-	json_dump -i > /tmp/.board.json
-	mv /tmp/.board.json ${CFG}
+	json_dump -i -o ${CFG}
 }

@@ -75,6 +75,7 @@ get_status_led() {
 	fritz300e|\
 	fritz4020|\
 	fritz450e|\
+	gl-ar750s|\
 	gl-usb150|\
 	mr12|\
 	mr16|\
@@ -85,8 +86,6 @@ get_status_led() {
 	tl-wr902ac-v1)
 		status_led="$board:green:power"
 		;;
-	archer-c5|\
-	archer-c7|\
 	tl-mr10u|\
 	tl-mr12u|\
 	tl-mr13u|\
@@ -450,6 +449,8 @@ get_status_led() {
 	tl-mr6400)
 		status_led="tp-link:white:power"
 		;;
+	archer-c5|\
+	archer-c7|\
 	tl-mr3220|\
 	tl-mr3220-v2|\
 	tl-mr3420|\
@@ -573,6 +574,9 @@ set_state() {
 		status_led_blink_failsafe
 		;;
 	preinit_regular)
+		status_led_blink_preinit_regular
+		;;
+	upgrade)
 		status_led_blink_preinit_regular
 		;;
 	done)

@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnftnl
-PKG_VERSION:=1.1.2
+PKG_VERSION:=1.1.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://netfilter.org/projects/$(PKG_NAME)/files
-PKG_HASH:=a5c7b7a6c13c9c5898b13fcb1126fefce2015d5a96d7c354b19aaa40b6aece5d
+PKG_HASH:=66de4d05227c0a1a731c369b193010d18a05b1185c2735211e0ecf658eeb14f3
 PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
 PKG_LICENSE:=GPL-2.0+
 
@@ -31,7 +31,7 @@ define Package/libnftnl
   DEPENDS:=+libmnl
   TITLE:=Low-level netlink library for the nf_tables subsystem
   URL:=http://www.netfilter.org/projects/libnftnl
-  ABI_VERSION:=7
+  ABI_VERSION:=12
 endef
 
 define Package/libnftnl/description
@@ -43,8 +43,7 @@ TARGET_CFLAGS += $(FPIC)
 
 CONFIGURE_ARGS += \
 	--enable-static \
-	--enable-shared \
-	--without-json-parsing
+	--enable-shared
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/libnftnl
